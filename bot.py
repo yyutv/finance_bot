@@ -442,27 +442,34 @@ def show_experiment_result(message, goal_name, goal_amount, balance):
         current_saving = current_income - current_expense
 
         if current_saving > 0:
-            current_months = remaining / current_saving
-            diff = current_months - new_months
+            current_months = f"{remaining / current_saving:.1f} мес."
+            diff = (remaining / current_saving) - new_months
 
             if diff > 0:
-                compare = f"Быстрее на {diff:.1f} мес. 🚀"
+                compare = f"🚀 Быстрее на {diff:.1f} мес."
             else:
-                compare = f"Медленнее на {abs(diff):.1f} мес. ⏰"
+                compare = f"⏰ Медленнее на {abs(diff):.1f} мес."
         else:
-            current_months = "никогда"
-            compare = "раньше, чем сейчас 👍"
+            current_months = "❌ не получается (тратишь больше, чем получаешь)"
+            compare = "✅ теперь получится!"
 
-        text = (f"📊 Результат:\n\n"
-                f"Сейчас ты копил бы: {current_months}\n"
-                f"Если изменить: {new_months:.1f} мес.\n"
-                f"Итог: {compare}")
+        text = (f"📊 РЕЗУЛЬТАТ ЭКСПЕРИМЕНТА:\n\n"
+                f"💰 Доход: {new_income:.0f} руб./мес\n"
+                f"💸 Расход: {new_expense:.0f} руб./мес\n"
+                f"💎 Откладываешь: {monthly_saving:.0f} руб./мес\n\n"
+                f"🎯 Цель: {goal_name}\n"
+                f"⏳ Осталось: {remaining:.0f} руб.\n\n"
+                f"⏱ СРОК НАКОПЛЕНИЯ:\n"
+                f"• Сейчас: {current_months}\n"
+                f"• Если изменить: {new_months:.1f} мес.\n\n"
+                f"{compare}")
 
         bot.send_message(user_id, text)
 
     except Exception as e:
         bot.send_message(user_id, "❌ Ошибка. Пиши так: 30000 20000")
         print(f"Ошибка: {e}")
+
 
 # Запуск бота
 print("🚀 Бот запускается...")
