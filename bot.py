@@ -441,7 +441,7 @@ def show_experiment_result(message, goal_name, goal_amount, balance):
         current_expense = sum(expenses) / len(expenses) if expenses else 0
         current_saving = current_income - current_expense
         
-        if current_saving > 0:
+                if current_saving > 0:
             current_months = remaining / current_saving
             diff = current_months - new_months
             
@@ -465,4 +465,25 @@ def show_experiment_result(message, goal_name, goal_amount, balance):
 
 # Запуск бота
 print("Бот запущен...")
+
+import os
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+
+class HealthCheckHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'OK')
+
+def run_health_server():
+    port = int(os.environ.get('PORT', 10000))
+    server = HTTPServer(('', port), HealthCheckHandler)
+    print(f"Сервер здоровья запущен на порту {port}")
+    server.serve_forever()
+
+# Запускаем сервер в отдельном потоке
+threading.Thread(target=run_health_server, daemon=True).start()
+
+# Запускаем бота
 bot.infinity_polling()
