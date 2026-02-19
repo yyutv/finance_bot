@@ -13,32 +13,26 @@ conn = sqlite3.connect('finance.db', check_same_thread=False)
 cursor = conn.cursor()
 
 # Создаём таблицы
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS users (
+# Создаём таблицы
+cursor.execute('''CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY,
     name TEXT,
     created_at TEXT
-)
-''')
+)''')
 
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS transactions (
+cursor.execute('''CREATE TABLE IF NOT EXISTS transactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     amount REAL,
     category TEXT,
     date TEXT
-)
-''')
+)''')
 
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS goals (
+cursor.execute('''CREATE TABLE IF NOT EXISTS goals (
     user_id INTEGER PRIMARY KEY,
     goal_name TEXT,
     goal_amount REAL
-)
-''')
-conn.commit()
+)''')
 
 # Команда /start
 @bot.message_handler(commands=['start'])
