@@ -432,19 +432,17 @@ def show_experiment_result(message, goal_name, goal_amount, balance):
         new_months = remaining / monthly_saving
         
         # Текущий прогноз для сравнения
-        cursor.execute("SELECT amount FROM transactions WHERE user_id = ? AND amount > 0", (user_id,))
-        incomes = [i[0] for i in cursor.fetchall()]
-        cursor.execute("SELECT amount FROM transactions WHERE user_id = ? AND amount < 0", (user_id,))
+          cursor.execute("SELECT amount FROM transactions WHERE user_id = ? AND amount < 0", (user_id,))
         expenses = [abs(e[0]) for e in cursor.fetchall()]
-        
+
         current_income = sum(incomes) / len(incomes) if incomes else 0
         current_expense = sum(expenses) / len(expenses) if expenses else 0
         current_saving = current_income - current_expense
-        
-                if current_saving > 0:
+
+        if current_saving > 0:
             current_months = remaining / current_saving
             diff = current_months - new_months
-            
+
             if diff > 0:
                 compare = f"Быстрее на {diff:.1f} мес. 🚀"
             else:
@@ -452,14 +450,14 @@ def show_experiment_result(message, goal_name, goal_amount, balance):
         else:
             current_months = "никогда"
             compare = "раньше, чем сейчас 👍"
-        
+
         text = (f"📊 Результат:\n\n"
-               f"Сейчас ты копил бы: {current_months:.1f} мес.\n"
-               f"Если изменить: {new_months:.1f} мес.\n"
-               f"Итог: {compare}")
-        
+                f"Сейчас ты копил бы: {current_months:.1f} мес.\n"
+                f"Если изменить: {new_months:.1f} мес.\n"
+                f"Итог: {compare}")
+
         bot.send_message(user_id, text)
-        
+
     except:
         bot.send_message(user_id, "❌ Ошибка. Пиши так: 30000 20000")
 
@@ -479,7 +477,7 @@ class HealthCheckHandler(BaseHTTPRequestHandler):
 def run_health_server():
     port = int(os.environ.get('PORT', 10000))
     server = HTTPServer(('', port), HealthCheckHandler)
-    print(f"Сервер здоровья запущен на порту {port}")
+    print(f"✅ Сервер здоровья запущен на порту {port}")
     server.serve_forever()
 
 # Запускаем сервер в отдельном потоке
