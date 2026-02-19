@@ -415,24 +415,26 @@ def run_experiment(user_id):
     bot.register_next_step_handler(msg, show_experiment_result, goal_name, goal_amount, balance)
 
 def show_experiment_result(message, goal_name, goal_amount, balance):
-    user_id = message.chat.id
-    
     try:
+        user_id = message.chat.id
         parts = message.text.split()
         new_income = float(parts[0])
         new_expense = float(parts[1])
-        
+
         remaining = goal_amount - balance
         monthly_saving = new_income - new_expense
-        
+
         if monthly_saving <= 0:
             bot.send_message(user_id, "❌ При таких расходах ты ничего не отложишь!")
             return
-        
+
         new_months = remaining / monthly_saving
-        
+
         # Текущий прогноз для сравнения
-          cursor.execute("SELECT amount FROM transactions WHERE user_id = ? AND amount < 0", (user_id,))
+        cursor.execute("SELECT amount FROM transactions WHERE user_id = ? AND amount > 0", (user_id,))
+        incomes = [i[0] for i in cursor.fetchall()]
+        
+        cursor.execute("SELECT amount FROM transactions WHERE user_id = ? AND amount < 0", (user_id,))
         expenses = [abs(e[0]) for e in cursor.fetchall()]
 
         current_income = sum(incomes) / len(incomes) if incomes else 0
@@ -452,17 +454,18 @@ def show_experiment_result(message, goal_name, goal_amount, balance):
             compare = "раньше, чем сейчас 👍"
 
         text = (f"📊 Результат:\n\n"
-                f"Сейчас ты копил бы: {current_months:.1f} мес.\n"
+                f"Сейчас ты копил бы: {current_months}\n"
                 f"Если изменить: {new_months:.1f} мес.\n"
                 f"Итог: {compare}")
 
         bot.send_message(user_id, text)
 
-    except:
+    except Exception as e:
         bot.send_message(user_id, "❌ Ошибка. Пиши так: 30000 20000")
+        print(f"Ошибка: {e}")
 
 # Запуск бота
-print("Бот запущен...")
+print("🚀 Бот запускается...")
 
 import os
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -484,4 +487,5 @@ def run_health_server():
 threading.Thread(target=run_health_server, daemon=True).start()
 
 # Запускаем бота
+print("🤖 Бот готов к работе! Иди в Telegram и пиши /start")
 bot.infinity_polling()
